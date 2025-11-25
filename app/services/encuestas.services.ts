@@ -154,6 +154,8 @@ function updateInputToNotionProperties(input: any) {
 
 export class EncuestasService {
 
+    private static instance: EncuestasService;
+
     private readonly mapperUtils = {
         richText: (value: string) => ({
             rich_text: [{ text: { content: value } }],
@@ -168,9 +170,14 @@ export class EncuestasService {
         select: (value: string) => ({ select: { name: value } }),
     };
 
+    private constructor() {}
 
-
-    constructor() {}
+    public static getInstance(): EncuestasService {
+        if (!EncuestasService.instance) {
+            EncuestasService.instance = new EncuestasService();
+        }
+        return EncuestasService.instance;
+    }
 
     mapToNotionProperties(input: OdooSurveyN8N): Record<string, any> {
         return {
@@ -199,6 +206,37 @@ export class EncuestasService {
         });
 
         return page;
+    }
+
+    async createOrUpdate(input: OdooSurveyN8N): Promise<PageObjectResponse | PartialPageObjectResponse> {
+        // Buscar si existe un registro con el mismo ID de Odoo
+        const queryParams: NotionDataSourceQueryParams = {
+            data_source_id: ENCUESTAS_DATASOURCE_ID,
+            filter: {
+                property: 'id',
+                number: {
+                    equals: input.id
+                }
+            }
+        };
+
+        const response = await notionClient.dataSources.query(queryParams);
+
+        // Si existe, actualizar el primer resultado encontrado
+        if (response.results && response.results.length > 0) {
+            const existingPage = response.results[0] as PageObjectResponse;
+            const properties = this.mapToNotionProperties(input);
+
+            const updatedPage = await notionClient.pages.update({
+                page_id: existingPage.id,
+                properties,
+            });
+
+            return updatedPage;
+        }
+
+        // Si no existe, crear uno nuevo
+        return await this.create(input);
     }
 
     async getById(encuestaId: string): Promise<any> {
@@ -318,5 +356,3 @@ export class EncuestasService {
         });
     }
 }
-
-export default EncuestasService;
