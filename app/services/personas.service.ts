@@ -3,6 +3,7 @@
  */
 
 import "server-only";
+import {cache} from "react";
 import {notionClient} from '../libs/notion';
 import type {
   CreatePersonaInput,
@@ -16,6 +17,9 @@ import type {
 import type {NotionDataSourceQueryParams, NotionFilter, PaginationOptions,} from '@/app/types/notion';
 
 import {extractFileUrls, extractRelationIds, extractRichText, extractTitle,} from '@/app/utils/notion'
+
+// Revalidar cada 60 segundos (ISR)
+export const revalidate = process.env.CACHE_MAX_AGE ?? 5;
 
 // ID del data source de Personas en Notion
 const PERSONAS_DATASOURCE_ID = process.env.NOTION_PERSONAS_DATASOURCE_ID ?? '';
@@ -216,17 +220,17 @@ export class PersonasService  {
   }
 
   /**
-   * READ - Obtener una persona por ID
+   * READ - Obtener una persona por ID (cacheado)
    */
-  async getById(personaId: string): Promise<Persona> {
+  getById = cache(async (personaId: string): Promise<Persona> => {
     const page = await notionClient.pages.retrieve({ page_id: personaId });
     return transformNotionPageToPersona(page as any as NotionPersonaPage);
-  }
+  });
 
   /**
-   * READ - Listar todas las personas con paginaci�n
+   * READ - Listar todas las personas con paginaci�n (cacheado)
    */
-  async list(options?: PaginationOptions): Promise<PaginatedPersonas> {
+  list = cache(async (options?: PaginationOptions): Promise<PaginatedPersonas> => {
     const queryParams: NotionDataSourceQueryParams = {
       data_source_id: PERSONAS_DATASOURCE_ID,
     };
@@ -246,15 +250,15 @@ export class PersonasService  {
       hasMore: response.has_more,
       nextCursor: response.next_cursor || undefined,
     };
-  }
+  });
 
   /**
-   * QUERY - Buscar personas con filtros
+   * QUERY - Buscar personas con filtros (cacheado por combinación de filtros)
    */
-  async query(
+  query = cache(async (
     filters?: PersonaFilters,
     options?: PaginationOptions
-  ): Promise<PaginatedPersonas> {
+  ): Promise<PaginatedPersonas> => {
     const queryParams: NotionDataSourceQueryParams = {
       data_source_id: PERSONAS_DATASOURCE_ID,
     };
@@ -314,7 +318,7 @@ export class PersonasService  {
       hasMore: response.has_more,
       nextCursor: response.next_cursor || undefined,
     };
-  }
+  });
 
   /**
    * UPDATE - Actualizar una persona

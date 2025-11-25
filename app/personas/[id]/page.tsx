@@ -1,5 +1,4 @@
-import { PersonasService } from "@/app/services/personas.service";
-import { PersonaDetail } from "@/app/components/Personas/PersonaDetail";
+import { PersonaDetailClient } from "@/app/components/Personas/PersonaDetailClient";
 import Link from "next/link";
 import styles from './page.module.css';
 
@@ -10,9 +9,7 @@ interface PersonaPageProps {
 }
 
 export default async function PersonaPage({ params }: PersonaPageProps) {
-  const personasService = new PersonasService();
   const { id } = await params;
-  const persona = await personasService.getById(id);
 
   return (
     <main className={styles.container}>
@@ -38,7 +35,7 @@ export default async function PersonaPage({ params }: PersonaPageProps) {
           </Link>
         </div>
 
-        <PersonaDetail persona={persona} />
+        <PersonaDetailClient id={id} />
       </div>
     </main>
   );

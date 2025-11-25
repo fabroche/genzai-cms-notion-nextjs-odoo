@@ -1,6 +1,10 @@
 import "server-only";
+import {cache} from "react";
 import {Client} from "@notionhq/client";
 import {PersonaPage, PersonaWithRelations, NotionPage} from "@/app/types/notion";
+
+// Revalidar cada 60 segundos (ISR)
+export const revalidate = process.env.CACHE_MAX_AGE ?? 5;
 
 const notionSecret = process.env.NOTION_SECRET ?? "";
 
@@ -74,7 +78,8 @@ export const expandPersonaRelations = async (persona: PersonaPage): Promise<Pers
     };
 };
 
-export const fetchPersonas = async (): Promise<PersonaPage[]> => {
+// Función cacheada con React.cache para deduplación dentro del mismo request
+export const fetchPersonas = cache(async (): Promise<PersonaPage[]> => {
     const PERSONAS_DATASOURCE_ID = process.env.NOTION_PERSONAS_DATASOURCE_ID;
 
     if (!PERSONAS_DATASOURCE_ID) {
@@ -84,18 +89,19 @@ export const fetchPersonas = async (): Promise<PersonaPage[]> => {
     const personas = await getDatabase(PERSONAS_DATASOURCE_ID, "nombre");
 
     return personas;
-};
+});
 
-// Nueva función para obtener personas con relaciones expandidas
-export const fetchPersonasWithRelations = async (): Promise<PersonaWithRelations[]> => {
+// Nueva función para obtener personas con relaciones expandidas (también cacheada)
+export const fetchPersonasWithRelations = cache(async (): Promise<PersonaWithRelations[]> => {
     const personas = await fetchPersonas();
 
     return await Promise.all(
         personas.map(persona => expandPersonaRelations(persona))
     );
-};
+});
 
-export const getPageById = async (pageId: string): Promise<NotionPage | null> => {
+// Cachear también getPageById para evitar llamadas duplicadas
+export const getPageById = cache(async (pageId: string): Promise<NotionPage | null> => {
     try {
         const page = await notionClient.pages.retrieve({ page_id: pageId });
         return page as NotionPage;
@@ -103,4 +109,4 @@ export const getPageById = async (pageId: string): Promise<NotionPage | null> =>
         console.error(`Error fetching page ${pageId}:`, error);
         return null;
     }
-};
+});
