@@ -126,7 +126,7 @@ export async function fetchOdooSurveysQuestions(): Promise<OdooSurveyN8NQuestion
     return data;
 }
 
-export async function fetchFilteredOdooSurveysQuestions({survey_id}: { survey_id: string }): Promise<OdooSurveyN8NQuestion[]> {
+export async function fetchFilteredOdooSurveysQuestionsBySurveyId({survey_id}: { survey_id: string }): Promise<OdooSurveyN8NQuestion[]> {
 
     const response = await fetch(N8N_WEBHOOK_ODOO_SURVEY_QUESTION, {
         method: 'POST',

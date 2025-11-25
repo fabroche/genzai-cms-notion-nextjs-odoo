@@ -1,0 +1,997 @@
+{
+  "name": "Endpoints Odoo",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "54566811-c370-444f-b2b5-10e9211739d3",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "3adef273-5284-4ef0-b301-04c8171b22fe",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "51c76889-127f-46b9-9a03-607cfb8bdef9",
+              "name": "display_name",
+              "value": "={{ $json.display_name }}",
+              "type": "string"
+            },
+            {
+              "id": "6e8af066-2e27-41f4-bcfa-18da8232dfd4",
+              "name": "description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "afb73e79-c251-418d-9553-8d12e0bbc0b2",
+              "name": "active",
+              "value": "={{ $json.active }}",
+              "type": "boolean"
+            },
+            {
+              "id": "a8dc681f-181b-43bf-90fb-ffed70cacdf9",
+              "name": "question_and_page_ids",
+              "value": "={{ $json.question_and_page_ids }}",
+              "type": "array"
+            },
+            {
+              "id": "eb32e6b9-0d5e-4f55-ae03-2681e20f2811",
+              "name": "answer_duration_avg",
+              "value": "={{ $json.answer_duration_avg }}",
+              "type": "number"
+            },
+            {
+              "id": "696f2420-46b0-48d4-bbed-07cc00a36b73",
+              "name": "is_time_limited",
+              "value": "={{ $json.is_time_limited }}",
+              "type": "boolean"
+            },
+            {
+              "id": "622e651a-aa1e-4b2b-9ec1-356f1ff876fb",
+              "name": "time_limit",
+              "value": "={{ $json.time_limit }}",
+              "type": "number"
+            },
+            {
+              "id": "e7cd710c-d990-4938-b22b-1d1c034929d5",
+              "name": "session_link",
+              "value": "={{ $json.session_link }}",
+              "type": "string"
+            },
+            {
+              "id": "7e1dfadb-edd2-47a5-a8af-cfa5ffda88ba",
+              "name": "create_date",
+              "value": "={{ $json.create_date }}",
+              "type": "string"
+            },
+            {
+              "id": "8e20aa1a-2390-4430-8f54-216258d18bb6",
+              "name": "create_uid",
+              "value": "={{ $json.create_uid }}",
+              "type": "array"
+            },
+            {
+              "id": "544bfa32-4770-4bd9-a761-5b072bc0b411",
+              "name": "lang_ids",
+              "value": "={{ $json.lang_ids }}",
+              "type": "array"
+            },
+            {
+              "id": "5fd74a55-cfaf-4b0b-badd-f11221eb5e10",
+              "name": "survey_type",
+              "value": "={{ $json.survey_type }}",
+              "type": "string"
+            },
+            {
+              "id": "2b2609db-7f08-49b1-8c8c-192f80d10200",
+              "name": "allowed_survey_types",
+              "value": "={{ $json.allowed_survey_types }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        -448
+      ],
+      "id": "21b5dc26-8743-41c2-9b02-22d67d6c98e5",
+      "name": "ParsingFieldsToNotion"
+    },
+    {
+      "parameters": {
+        "content": "# API Documentation \n\n## Surveys\n### /surveys\nGET Lista todas las surveys\nPOST Obtiene un survey dado un ID que se debe pasar por el body\nPOST Creas una nueva survey si pasas las llave survey por el body\nPUT Actualiza los valores de la survey\n\n### /surveys-questions\nGET Retorna todas las Survey Questions existentes.\nPOST Obtiene todas las preguntas de una survey, se le debe pasar en el body el survey_id la cual utilizara como filtro.\nPOST Obtiene una SurveyQuestion basado en el id que le pasen por el body. se debe usar la key \"id\".\nPOST Crea una nueva SurveyQuestion para ello solo necesitas pasar por el body la llave surveyQuestion.\nPUT Actualiza los valores de una SurveyQuestion\n\n\n[Guide](https://docs.n8n.io/workflows/sticky-notes/)",
+        "height": 1088,
+        "width": 544,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1328,
+        -400
+      ],
+      "id": "6b442f94-b1b5-42fd-8bbe-786d0f1e63bc",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "httpMethod": [
+          "GET",
+          "POST",
+          "DELETE",
+          "PUT"
+        ],
+        "path": "/surveys",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -672,
+        -384
+      ],
+      "id": "5eb258ea-2a58-4864-9248-1eaad8196458",
+      "name": "Surveys",
+      "webhookId": "0cbd9020-b407-422f-8b31-a6f0e11fa373"
+    },
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "httpMethod": [
+          "GET",
+          "POST",
+          "DELETE",
+          "PUT"
+        ],
+        "path": "surveys-questions",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -672,
+        392
+      ],
+      "id": "87f6a590-4c11-4889-a540-935c9c5b4fb7",
+      "name": "Surveys-Questions",
+      "webhookId": "97eaeae0-ea63-4f3e-9b4d-a5f70f7d18e1"
+    },
+    {
+      "parameters": {
+        "resource": "custom",
+        "customResource": "survey.survey",
+        "operation": "get",
+        "customResourceId": "={{$json?.body?.id ?? $json.id}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -304
+      ],
+      "id": "829283ad-e0ce-4abe-9071-fabfca167395",
+      "name": "GetSurveyById",
+      "credentials": {
+        "odooApi": {
+          "id": "GnnJ3fcJ5yPUyD3g",
+          "name": "Odoo account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "custom",
+        "customResource": "survey.survey",
+        "operation": "getAll",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -592
+      ],
+      "id": "960e2c74-2b61-4af3-9f5e-0f0a5a6f2b05",
+      "name": "GetManySurveys",
+      "credentials": {
+        "odooApi": {
+          "id": "GnnJ3fcJ5yPUyD3g",
+          "name": "Odoo account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "custom",
+        "customResource": "survey.survey",
+        "operation": "update",
+        "customResourceId": "={{ $json.body.id }}",
+        "fieldsToCreateOrUpdate": {
+          "fields": [
+            {
+              "fieldName": "title",
+              "fieldValue": "={{ $json.body.title }}"
+            },
+            {
+              "fieldName": "description",
+              "fieldValue": "={{ $json.body.description }}"
+            },
+            {
+              "fieldName": "active",
+              "fieldValue": "={{ $json.body.active }}"
+            },
+            {
+              "fieldName": "question_and_page_ids",
+              "fieldValue": "={{ $json.body.question_and_page_ids }}"
+            },
+            {
+              "fieldName": "answer_duration_avg",
+              "fieldValue": "={{ $json.body.answer_duration_avg }}"
+            },
+            {
+              "fieldName": "is_time_limited",
+              "fieldValue": "={{ $json.body.is_time_limited }}"
+            },
+            {
+              "fieldName": "time_limit",
+              "fieldValue": "={{ $json.body.time_limit }}"
+            },
+            {
+              "fieldName": "session_link",
+              "fieldValue": "={{ $json.body.session_link }}"
+            },
+            {
+              "fieldName": "create_date",
+              "fieldValue": "={{ $json.body.create_date }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        -160
+      ],
+      "id": "702a3162-9aec-4c0a-b6e8-0cf5e23488bc",
+      "name": "UpdateSurveyByID",
+      "credentials": {
+        "odooApi": {
+          "id": "GnnJ3fcJ5yPUyD3g",
+          "name": "Odoo account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b4e5a2ce-674f-4515-ae04-2d75de2d1a87",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "9371cf8f-433b-4b53-ba24-6f0b6677a55b",
+              "name": "display_name",
+              "value": "={{ $json.display_name }}",
+              "type": "string"
+            },
+            {
+              "id": "1d94f13e-53a1-4c5b-b54d-459ac6f79b38",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "eacb3dcf-eae3-4848-a41f-ef476ae09490",
+              "name": "description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "70418873-902c-4000-89d1-9687546ee083",
+              "name": "question_placeholder",
+              "value": "={{ $json.question_placeholder }}",
+              "type": "string"
+            },
+            {
+              "id": "56ee66d5-cf33-4c4d-a1d9-85cfb47d37fd",
+              "name": "survey_id",
+              "value": "={{ $json.survey_id || [] }}",
+              "type": "array"
+            },
+            {
+              "id": "c56f9c55-42d0-4689-894a-db47d2bde1bc",
+              "name": "session_available",
+              "value": "={{ $json.session_available }}",
+              "type": "boolean"
+            },
+            {
+              "id": "5b6fa2f5-60ed-40a9-940d-6b74aa5f1777",
+              "name": "is_page",
+              "value": "={{ $json.is_page }}",
+              "type": "boolean"
+            },
+            {
+              "id": "7361e932-8437-445c-87ad-d7414ac2e3ac",
+              "name": "question_ids",
+              "value": "={{ $json.question_ids }}",
+              "type": "array"
+            },
+            {
+              "id": "9fceeb07-4baf-4fb6-95ec-6416e6bc3e06",
+              "name": "is_time_limited",
+              "value": "={{ $json.is_time_limited }}",
+              "type": "boolean"
+            },
+            {
+              "id": "59d69e5a-7826-486a-ac4f-435e465d7214",
+              "name": "time_limit",
+              "value": "={{ $json.time_limit }}",
+              "type": "number"
+            },
+            {
+              "id": "e1e19d10-f45d-4454-8f08-ef887186d7e5",
+              "name": "create_uid",
+              "value": "={{ $json.create_uid }}",
+              "type": "array"
+            },
+            {
+              "id": "e1655787-ba14-4ce2-886f-1ad51cfaea5e",
+              "name": "create_date",
+              "value": "={{ $json.create_date }}",
+              "type": "string"
+            },
+            {
+              "id": "7912f2b0-e07f-43e1-9a2a-c8c6e4207ed6",
+              "name": "survey_type",
+              "value": "={{ $json.survey_type }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        248
+      ],
+      "id": "ef9257c0-dcc9-4106-8d1d-49f3541bd06b",
+      "name": "ParsingSurveysQuestion"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        448,
+        248
+      ],
+      "id": "31abdb1f-362e-402c-8e3f-3e69ca76147f",
+      "name": "RespondToSurveys-Questions"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        448,
+        -448
+      ],
+      "id": "78d5b567-9ea6-4dd9-9ca1-64763ea70977",
+      "name": "RespondSurveys",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.survey_id }}",
+                    "rightValue": "={{$json.body.survey_id}}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "5e20c62e-8c72-4ed6-94f4-a7c8daff6127"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "GetFilteredQuestionsBySurveyId"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "43bae622-15a8-4a1e-ac35-820f9f25e77c",
+                    "leftValue": "={{ $json.body.id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "GetSurveyQuestionById"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "11330611-f92c-498a-a9cd-525744cb7d83",
+                    "leftValue": "={{ $json.body.surveyQuestion }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CreateSurveyQuestion"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -448,
+        408
+      ],
+      "id": "5c2ae85d-c08d-42c6-8c87-a3f32740de96",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "custom",
+        "customResource": "survey.question",
+        "operation": "get",
+        "customResourceId": "={{$json?.body?.id ?? $json.id}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        0,
+        536
+      ],
+      "id": "b8072cf1-46a8-4144-a175-4985dc235726",
+      "name": "GetSurveyQuestionById",
+      "credentials": {
+        "odooApi": {
+          "id": "GnnJ3fcJ5yPUyD3g",
+          "name": "Odoo account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "450b1420-1590-4a43-a0d7-c0ad319f0c7c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "GetSurveyById"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "184854e2-633f-4114-beba-14e5a5f002bd",
+                    "leftValue": "={{ $json.body.survey }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CreateSurvey"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -448,
+        -352
+      ],
+      "id": "b7fc2567-75b1-471b-b427-71c3654bde44",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "resource": "custom",
+        "customResource": "survey.survey",
+        "fieldsToCreateOrUpdate": {
+          "fields": [
+            {
+              "fieldName": "title",
+              "fieldValue": "={{ $json.body.survey.title }}"
+            },
+            {
+              "fieldName": "display_name",
+              "fieldValue": "={{ $json.body.survey.display_name }}"
+            },
+            {
+              "fieldName": "description",
+              "fieldValue": "={{ $json.body.survey.description }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        -448
+      ],
+      "id": "3bd4e0d5-1b82-4b57-9a8b-4d1f8ca714a2",
+      "name": "CreateSurvey",
+      "credentials": {
+        "odooApi": {
+          "id": "GnnJ3fcJ5yPUyD3g",
+          "name": "Odoo account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "custom",
+        "customResource": "survey.question",
+        "operation": "getAll",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        0,
+        64
+      ],
+      "id": "89ab76e4-c6fe-4238-9af6-ee134595f4fe",
+      "name": "GetAllSurveysQuestions",
+      "credentials": {
+        "odooApi": {
+          "id": "GnnJ3fcJ5yPUyD3g",
+          "name": "Odoo account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "custom",
+        "customResource": "survey.question",
+        "operation": "getAll",
+        "returnAll": true,
+        "options": {},
+        "filterRequest": {
+          "filter": [
+            {
+              "fieldName": "survey_id",
+              "value": "={{ Number($json.body.survey_id) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        0,
+        256
+      ],
+      "id": "6dc71a5e-34f6-4450-8828-571e9412762c",
+      "name": "GetFilteredSurveysQuestion",
+      "credentials": {
+        "odooApi": {
+          "id": "GnnJ3fcJ5yPUyD3g",
+          "name": "Odoo account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "custom",
+        "customResource": "survey.question",
+        "fieldsToCreateOrUpdate": {
+          "fields": [
+            {
+              "fieldName": "title",
+              "fieldValue": "={{ $json.body.surveyQuestion.title }}"
+            },
+            {
+              "fieldName": "description",
+              "fieldValue": "={{ $json.body.surveyQuestion.description }}"
+            },
+            {
+              "fieldName": "question_placeholder",
+              "fieldValue": "={{ $json.body.surveyQuestion.question_placeholder }}"
+            },
+            {
+              "fieldName": "survey_id",
+              "fieldValue": "={{ $json.body.surveyQuestion.survey_id[0]}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        400
+      ],
+      "id": "7df0720e-6361-445a-bcd4-9ade96b2fa99",
+      "name": "CreateSurveyQuestion",
+      "credentials": {
+        "odooApi": {
+          "id": "GnnJ3fcJ5yPUyD3g",
+          "name": "Odoo account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "custom",
+        "customResource": "survey.question",
+        "operation": "update",
+        "customResourceId": "={{ $json.body.id }}",
+        "fieldsToCreateOrUpdate": {
+          "fields": [
+            {
+              "fieldName": "title",
+              "fieldValue": "={{ $json.body.title }}"
+            },
+            {
+              "fieldName": "description",
+              "fieldValue": "={{ $json.body.description }}"
+            },
+            {
+              "fieldName": "question_placeholder",
+              "fieldValue": "={{ $json.body.question_placeholder }}"
+            },
+            {
+              "fieldName": "survey_id",
+              "fieldValue": "={{ $json.body.survey_id[0] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        688
+      ],
+      "id": "d20369b3-2261-4c91-afa7-bbc29012196e",
+      "name": "UpdateSurveyQuestion",
+      "credentials": {
+        "odooApi": {
+          "id": "GnnJ3fcJ5yPUyD3g",
+          "name": "Odoo account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "ParsingFieldsToNotion": {
+      "main": [
+        [
+          {
+            "node": "RespondSurveys",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Surveys": {
+      "main": [
+        [
+          {
+            "node": "GetManySurveys",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "UpdateSurveyByID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetSurveyById": {
+      "main": [
+        [
+          {
+            "node": "ParsingFieldsToNotion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetManySurveys": {
+      "main": [
+        [
+          {
+            "node": "ParsingFieldsToNotion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Surveys-Questions": {
+      "main": [
+        [
+          {
+            "node": "GetAllSurveysQuestions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "UpdateSurveyQuestion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UpdateSurveyByID": {
+      "main": [
+        [
+          {
+            "node": "GetSurveyById",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ParsingSurveysQuestion": {
+      "main": [
+        [
+          {
+            "node": "RespondToSurveys-Questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "GetFilteredSurveysQuestion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GetSurveyQuestionById",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "CreateSurveyQuestion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetSurveyQuestionById": {
+      "main": [
+        [
+          {
+            "node": "ParsingSurveysQuestion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CreateSurvey": {
+      "main": [
+        [
+          {
+            "node": "GetSurveyById",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "GetSurveyById",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "CreateSurvey",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetAllSurveysQuestions": {
+      "main": [
+        [
+          {
+            "node": "ParsingSurveysQuestion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetFilteredSurveysQuestion": {
+      "main": [
+        [
+          {
+            "node": "ParsingSurveysQuestion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CreateSurveyQuestion": {
+      "main": [
+        [
+          {
+            "node": "GetSurveyQuestionById",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UpdateSurveyQuestion": {
+      "main": [
+        [
+          {
+            "node": "GetSurveyQuestionById",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "versionId": "3600b998-c9c8-4422-a6b4-10425de97546",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "93ebc41241418576ff5f110e424be237c10358978df589e80ce2f32e618f224b"
+  },
+  "id": "iNXC4tDOoR7gcZ5Z",
+  "tags": []
+}

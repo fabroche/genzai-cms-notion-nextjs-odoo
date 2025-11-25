@@ -211,6 +211,7 @@ export interface PersonaProperties {
   Roles: RelationProperty;
 }
 
+
 // Main Page type
 export interface NotionPage<T = Record<string, NotionProperty>> {
   object: 'page';
@@ -241,6 +242,7 @@ export interface PersonaWithRelations extends Omit<PersonaPage, 'properties'> {
     Roles: RelationProperty & { expanded?: NotionPage[] };
   };
 }
+
 // ===================================================================================================================
 // ===================================================================================================================
 // ===================================================================================================================

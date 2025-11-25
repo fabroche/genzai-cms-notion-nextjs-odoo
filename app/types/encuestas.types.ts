@@ -1,6 +1,17 @@
 /**
  * Tipos para Odoo - Módulo de Encuestas
  */
+import {
+  CheckboxProperty,
+  DateProperty,
+  EmailProperty,
+  FilesProperty, NotionPage, NumberProperty,
+  PhoneNumberProperty, RelationProperty,
+  RichTextProperty, SelectProperty,
+  TitleProperty, UrlProperty
+} from "@/app/types/notion";
+
+// N8N
 
 export interface OdooSurveyN8N {
   id: number;
@@ -43,3 +54,23 @@ export interface OdooSurveyN8NQuestion {
 export type CreateOdooSurveyN8NQuestion = Pick<OdooSurveyN8NQuestion, 'title' | 'description' | 'question_placeholder' | 'survey_id'>
 
 export type UpdateOdooSurveyN8NQuestion = OdooSurveyN8NQuestion
+
+// Notion
+
+export interface SurveyProperties {
+  id: NumberProperty;
+  title: TitleProperty;
+  display_name: RichTextProperty;
+  description: RichTextProperty;
+  active: CheckboxProperty;
+  question_and_page_ids: RichTextProperty;
+  answer_duration_avg: NumberProperty;
+  is_time_limited: CheckboxProperty;
+  time_limit: NumberProperty;
+  session_link: UrlProperty;
+  create_date: DateProperty;
+  create_uid: RichTextProperty;
+  survey_type: SelectProperty;
+}
+
+export type SurveyPage = NotionPage<SurveyProperties>;
