@@ -1,10 +1,13 @@
 import "server-only";
 import {
     CreateOdooSurveyN8N,
-    CreateOdooSurveyN8NQuestion,
-    OdooSurveyN8N,
-    OdooSurveyN8NQuestion, UpdateOdooSurveyN8NQuestion
+    OdooSurveyN8N
 } from "@/app/types/encuestas.types";
+import {
+    CreateOdooSurveyN8NQuestion,
+    OdooSurveyN8NQuestion,
+    UpdateOdooSurveyN8NQuestion
+} from "@/app/types/encuestasQuestions.types";
 
 const N8N_WEBHOOK_ODOO_SURVEYS = process.env.N8N_WEBHOOK_ODOO_SURVEYS ?? '';
 const N8N_WEBHOOK_ODOO_SURVEY_QUESTION = process.env.N8N_WEBHOOK_ODOO_SURVEY_QUESTION ?? '';

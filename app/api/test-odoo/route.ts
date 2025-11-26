@@ -1,27 +1,16 @@
 import {NextResponse} from 'next/server';
-import {odooSearchRead} from '@/app/libs/odoo';
-import {
-    CreateOdooSurveyN8N,
-    CreateOdooSurveyN8NQuestion,
-    OdooSurvey,
-    OdooSurveyN8N,
-    UpdateOdooSurveyN8N, UpdateOdooSurveyN8NQuestion
-} from '@/app/types/encuestas.types';
-import {
-    fetchOdooSurveys,
-    fetchOdooSurveyById,
-    updateOdooSurveyById,
-    fetchFilteredOdooSurveysQuestions,
-    fetchOdooSurveyQuestionById,
-    createOdooSurvey,
-    createOdooSurveyQuestion,
-    fetchOdooSurveysQuestions,
-    updateOdooSurveyQuestion
-} from '@/app/libs/n8n';
+import {CreateOdooSurveyN8N, OdooSurveyN8N, UpdateOdooSurveyN8N} from '@/app/types/encuestas.types';
+
+import {SurveysQuestionsService} from "@/app/services/encuestasQuestions.services";
+
+import {SurveysService} from "@/app/services/encuestas.services";
+import {OdooSurveyN8NQuestion, UpdateOdooSurveyN8NQuestion} from "@/app/types/encuestasQuestions.types";
 
 // Desactivar cache en API routes para siempre traer datos frescos
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+const encuestasService = SurveysService.getInstance();
+const encuestasQuestionsService = SurveysQuestionsService.getInstance();
 
 /**
  * GET /api/test-odoo
@@ -50,6 +39,29 @@ export async function GET() {
             create_date: "2025-11-23 19:36:10"
         }
 
+        const surveyC: OdooSurveyN8N = {
+            id: 159,
+            create_uid: [1, "admin"],
+            survey_type: "survey",
+            title: "📝 Formulario de Información Esencial del Negocio Actualizado",
+            display_name: "📝 Formulario de Información Esencial del Negocio Actualizado X2",
+            description: "Esto lo actualice desde NextJS",
+            active: true,
+            question_and_page_ids: [
+                91,
+                87,
+                88,
+                89,
+                90
+            ],
+            answer_duration_avg: 0.01138888888888889,
+            is_time_limited: false,
+            time_limit: 10,
+            session_link: "http://odoo.genzai.cloud/s/3834",
+            create_date: "2025-11-23 19:36:10"
+        }
+
+
         const newSurvey: CreateOdooSurveyN8N = {
             title: "Survey Created from NextJS",
             display_name: "Survey Created from NextJS",
@@ -65,17 +77,43 @@ export async function GET() {
             survey_id: [1, "Feedback Form"],
         }
 
-        // const surveys = await fetchOdooSurveyById("8");
+
+
+        const surveysQuestionsOdoo = await encuestasQuestionsService.getOdooSurveyQuestions();
+
+        const promisesSurveysQuestions = surveysQuestionsOdoo.map(async (survey: OdooSurveyN8NQuestion) => {
+
+            return await encuestasQuestionsService.createOrUpdateNotionSurveyQuestion(survey)
+        })
+
+        const surveys = await Promise.all(promisesSurveysQuestions);
+
+
+        // const surveysOdoo = await encuestasService.getOdooSurveys();
+        //
+        // const promisesSurveys = surveysOdoo.map(async (survey: OdooSurveyN8N) => {
+        //
+        //     return await encuestasService.createOrUpdateNotionSurvey(survey)
+        // })
+        //
+        // const surveys = await Promise.all(promisesSurveys);
+
+        // const surveys = await encuestasService.getById("2b6a78e4-d4fc-8139-a648-eb338b03292a");
+
+        // const surveys = await encuestasService.createNotionSurvey(surveyC);
+
+        // const surveys = await fetchOdooSurveyById("1");
         // const surveys = await createOdooSurvey(newSurvey);
         // const surveys = await updateOdooSurveyById(surveyChanges);
 
         // const surveys = await fetchOdooSurveysQuestions();
-        // const surveys = await fetchOdooSurveysQuestions({survey_id: "8"});
+        // const surveys = await fetchFilteredOdooSurveysQuestionsBySurveyId({survey_id: "8"});
         // const surveys = await fetchOdooSurveyQuestionById("69");
         // const surveys = await createOdooSurveyQuestion(newSurveyQuestion);
-        const surveys = await updateOdooSurveyQuestion(newSurveyQuestion);
+        // const surveys = await updateOdooSurveyQuestion(newSurveyQuestion);
 
-        console.log(surveys)
+        console.log("surveys", surveys);
+        // console.log("results", results);
 
         console.log(`✅ Se encontraron ${surveys.length} encuestas`);
 

@@ -8,6 +8,7 @@ import {notionClient} from '@/app/libs/notion';
 import type {NotionDataSourceQueryParams, NotionFilter, PaginationOptions} from '@/app/types/notion';
 import {CreateOdooSurveyN8N, OdooSurveyN8N} from "@/app/types/encuestas.types";
 import {PageObjectResponse, PartialPageObjectResponse} from "@notionhq/client";
+import {OdooSurveyN8NQuestion} from "@/app/types/encuestasQuestions.types";
 
 // ID del data source de Encuestas en Notion
 const ENCUESTAS_DATASOURCE_ID = process.env.NOTION_FORMULARIOS_DATASOURCE_ID ?? '';
@@ -208,6 +209,19 @@ export class SurveysService {
         });
 
         return page;
+    }
+
+    async syncNotionDatabaseWithOdoo() {
+        const surveyN8NS = await this.getOdooSurveys();
+
+        const promisesSurveysQuestions = surveyN8NS.map(async (survey: OdooSurveyN8N) => {
+
+            return await this.createOrUpdateNotionSurvey(survey)
+        })
+
+        const surveys = await Promise.all(promisesSurveysQuestions);
+
+        return surveys
     }
 
     async getOdooSurveys(): Promise<OdooSurveyN8N[]> {

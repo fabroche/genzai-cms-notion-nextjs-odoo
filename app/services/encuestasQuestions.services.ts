@@ -6,12 +6,12 @@ import "server-only";
 import {notionClient} from '@/app/libs/notion';
 
 import type {NotionDataSourceQueryParams, NotionFilter, PaginationOptions} from '@/app/types/notion';
+import {PageObjectResponse, PartialPageObjectResponse} from "@notionhq/client";
 import {
     CreateOdooSurveyN8NQuestion,
     OdooSurveyN8NQuestion,
     UpdateOdooSurveyN8NQuestion
-} from "@/app/types/encuestas.types";
-import {PageObjectResponse, PartialPageObjectResponse} from "@notionhq/client";
+} from "@/app/types/encuestasQuestions.types";
 
 // ID del data source de Preguntas de Encuestas en Notion
 const SURVEY_QUESTIONS_DATASOURCE_ID = process.env.NOTION_SURVEY_QUESTIONS_DATASOURCE_ID ?? '';
@@ -24,19 +24,20 @@ export class SurveysQuestionsService {
 
     private readonly mapperUtils = {
         richText: (value: string) => ({
-            rich_text: [{ text: { content: value } }],
+            rich_text: [{text: {content: value}}],
         }),
         title: (value: string) => ({
-            title: [{ text: { content: value } }],
+            title: [{text: {content: value}}],
         }),
-        number: (value: number) => ({ number: value }),
-        checkbox: (value: boolean) => ({ checkbox: value }),
-        date: (value: string) => ({ date: { start: value } }),
-        url: (value: string) => ({ url: value }),
-        select: (value: string) => ({ select: { name: value } }),
+        number: (value: number) => ({number: value}),
+        checkbox: (value: boolean) => ({checkbox: value}),
+        date: (value: string) => ({date: {start: value}}),
+        url: (value: string) => ({url: value}),
+        select: (value: string) => ({select: {name: value}}),
     };
 
-    private constructor() {}
+    private constructor() {
+    }
 
     public static getInstance(): SurveysQuestionsService {
         if (!SurveysQuestionsService.instance) {
@@ -321,6 +322,19 @@ export class SurveysQuestionsService {
         }
 
         return data[0];
+    }
+
+    async syncNotionDatabaseWithOdoo() {
+        const surveysQuestionsOdoo = await this.getOdooSurveyQuestions();
+
+        const promisesSurveysQuestions = surveysQuestionsOdoo.map(async (survey: OdooSurveyN8NQuestion) => {
+
+            return await this.createOrUpdateNotionSurveyQuestion(survey)
+        })
+
+        const surveys = await Promise.all(promisesSurveysQuestions);
+
+        return surveys
     }
 
     // ========================================
