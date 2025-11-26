@@ -245,6 +245,8 @@ export class PersonasService  {
 
     const response = await notionClient.dataSources.query(queryParams);
 
+    console.log(response.results[0].properties.Tareas.relation);
+
     return {
       personas: response.results.map(transformNotionPageToPersona),
       hasMore: response.has_more,

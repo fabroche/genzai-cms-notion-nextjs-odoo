@@ -1,54 +1,22 @@
 /**
- * Servicio CRUD para la base de datos de Personas en Notion
+ * Servicio CRUD para la base de datos de Encuestas en Notion
  */
 
 import "server-only";
 import {notionClient} from '@/app/libs/notion';
 
-import type {NotionDataSourceQueryParams, NotionFilter, NotionPage, PaginationOptions} from '@/app/types/notion';
-import {OdooSurveyN8N, SurveyProperties} from "@/app/types/encuestas.types";
+import type {NotionDataSourceQueryParams, NotionFilter, PaginationOptions} from '@/app/types/notion';
+import {CreateOdooSurveyN8N, OdooSurveyN8N} from "@/app/types/encuestas.types";
 import {PageObjectResponse, PartialPageObjectResponse} from "@notionhq/client";
 
-// ID del data source de Personas en Notion
+// ID del data source de Encuestas en Notion
 const ENCUESTAS_DATASOURCE_ID = process.env.NOTION_FORMULARIOS_DATASOURCE_ID ?? '';
+// URL del webhook de N8N para Odoo
+const N8N_WEBHOOK_ODOO_SURVEYS = process.env.N8N_WEBHOOK_ODOO_SURVEYS ?? '';
 
-// Convierte input de creacion a propiedades de Notion
+export class SurveysService {
 
-// Convierte input de actualizacion a propiedades de Notion
-function updateInputToNotionProperties(input: any) {
-    const properties = new Map();
-
-    Object.keys(input).forEach((key) => {
-        if (key.startsWith("00")) {
-            properties.set(key, {
-                title: [
-                    {
-                        text: {
-                            content: input[key]
-                        }
-                    }
-                ],
-            })
-        }
-
-        properties.set(key, {
-            rich_text: [
-                {
-                    text: {
-                        content: input[key]
-                    }
-                }
-            ],
-        })
-    });
-
-
-    return Object.fromEntries(properties.entries());
-}
-
-export class EncuestasService {
-
-    private static instance: EncuestasService;
+    private static instance: SurveysService;
 
     private readonly mapperUtils = {
         richText: (value: string) => ({
@@ -66,11 +34,11 @@ export class EncuestasService {
 
     private constructor() {}
 
-    public static getInstance(): EncuestasService {
-        if (!EncuestasService.instance) {
-            EncuestasService.instance = new EncuestasService();
+    public static getInstance(): SurveysService {
+        if (!SurveysService.instance) {
+            SurveysService.instance = new SurveysService();
         }
-        return EncuestasService.instance;
+        return SurveysService.instance;
     }
 
     mapToNotionProperties(input: OdooSurveyN8N): Record<string, any> {
@@ -91,7 +59,7 @@ export class EncuestasService {
         };
     }
 
-    async create(input: OdooSurveyN8N): Promise<PageObjectResponse | PartialPageObjectResponse> {
+    async createNotionSurvey(input: OdooSurveyN8N): Promise<PageObjectResponse | PartialPageObjectResponse> {
         const properties = this.mapToNotionProperties(input);
 
         const page = await notionClient.pages.create({
@@ -102,7 +70,7 @@ export class EncuestasService {
         return page;
     }
 
-    async createOrUpdate(input: OdooSurveyN8N): Promise<PageObjectResponse | PartialPageObjectResponse> {
+    async createOrUpdateNotionSurvey(input: OdooSurveyN8N): Promise<PageObjectResponse | PartialPageObjectResponse> {
         // Buscar si existe un registro con el mismo ID de Odoo
         const queryParams: NotionDataSourceQueryParams = {
             data_source_id: ENCUESTAS_DATASOURCE_ID,
@@ -130,15 +98,21 @@ export class EncuestasService {
         }
 
         // Si no existe, crear uno nuevo
-        return await this.create(input);
+        return await this.createNotionSurvey(input);
     }
 
-    async getById(encuestaId: string): Promise<any> {
-        const page = await notionClient.pages.retrieve({page_id: personaId});
+    async getNotionPageById(pageId: string): Promise<PageObjectResponse | PartialPageObjectResponse> {
+        const page = await notionClient.pages.retrieve({
+            page_id: pageId,
+        });
         return page;
     }
 
-    async list(options?: PaginationOptions): any {
+    async getNotionSurveysPages(options?: PaginationOptions): Promise<{
+        results: Array<PageObjectResponse | PartialPageObjectResponse>;
+        has_more: boolean;
+        next_cursor?: string;
+    }> {
         const queryParams: NotionDataSourceQueryParams = {
             data_source_id: ENCUESTAS_DATASOURCE_ID,
         };
@@ -157,13 +131,17 @@ export class EncuestasService {
             results: response.results ?? [],
             has_more: response.has_more,
             next_cursor: response.next_cursor || undefined,
-        }
+        };
     }
 
-    async query(
+    async queryNotionSurveyPages(
         filters?: NotionFilter,
         options?: PaginationOptions
-    ): Promise<any> {
+    ): Promise<{
+        results: Array<PageObjectResponse | PartialPageObjectResponse>;
+        hasMore: boolean;
+        nextCursor?: string;
+    }> {
         const queryParams: NotionDataSourceQueryParams = {
             data_source_id: ENCUESTAS_DATASOURCE_ID,
         };
@@ -199,38 +177,121 @@ export class EncuestasService {
         const response = await notionClient.dataSources.query(queryParams);
 
         return {
-            personas: response.results ?? [],
+            results: response.results ?? [],
             hasMore: response.has_more,
             nextCursor: response.next_cursor || undefined,
         };
     }
 
-    async update(input): Promise<any> {
-        const {id, ...rest} = input;
-        const properties = updateInputToNotionProperties({id, ...rest});
+    async updateNotionSurveyPage(notionPageId: string, input: OdooSurveyN8N): Promise<PageObjectResponse | PartialPageObjectResponse> {
+        const properties = this.mapToNotionProperties(input);
 
         const page = await notionClient.pages.update({
-            page_id: id,
+            page_id: notionPageId,
             properties,
         });
 
         return page;
     }
 
-    async delete(encuestaId: string): Promise<void> {
+    async deleteNotionSurveyPage(notionPageId: string): Promise<void> {
         await notionClient.pages.update({
-            page_id: encuestaId,
+            page_id: notionPageId,
             archived: true,
         });
     }
 
-    async restore(encuestaId: string): Promise<any> {
+    async restoreNotionSurveyPage(encuestaId: string): Promise<PageObjectResponse | PartialPageObjectResponse> {
         const page = await notionClient.pages.update({
             page_id: encuestaId,
             archived: false,
         });
 
         return page;
+    }
+
+    async getOdooSurveys(): Promise<OdooSurveyN8N[]> {
+
+        const response = await fetch(N8N_WEBHOOK_ODOO_SURVEYS);
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(`Odoo Error: ${data.error.data?.message || data.error.message}`);
+        }
+
+        return data;
+    }
+
+    async getOdooSurveyById(id: string): Promise<OdooSurveyN8N> {
+
+        const response = await fetch(N8N_WEBHOOK_ODOO_SURVEYS, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({id})
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(`Odoo Error: ${data.error.data?.message || data.error.message}`);
+        }
+
+        return data[0];
+    }
+
+    async updateOdooSurveyById(changes: OdooSurveyN8N): Promise<OdooSurveyN8N> {
+
+        const response = await fetch(N8N_WEBHOOK_ODOO_SURVEYS, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({...changes})
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(`Odoo Error: ${data.error.data?.message || data.error.message}`);
+        }
+
+        return data[0];
+    }
+
+    async createOdooSurvey(survey: CreateOdooSurveyN8N): Promise<OdooSurveyN8N> {
+
+        const response = await fetch(N8N_WEBHOOK_ODOO_SURVEYS, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({survey})
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(`Odoo Error: ${data.error.data?.message || data.error.message}`);
+        }
+
+        // if (!data.result || !data.result.uid) {
+        //     throw new Error('Autenticación fallida: No se recibió UID del usuario');
+        // }
+
+        return data[0];
     }
 
     // Validar email
