@@ -10,8 +10,10 @@ import {PageObjectResponse, PartialPageObjectResponse} from "@notionhq/client";
 import {
     CreateOdooSurveyN8NQuestion,
     OdooSurveyN8NQuestion,
+    SurveyQuestionPage,
     UpdateOdooSurveyN8NQuestion
 } from "@/app/types/encuestasQuestions.types";
+import {surveyType} from "@/app/types/encuestas.types";
 
 // ID del data source de Preguntas de Encuestas en Notion
 const SURVEY_QUESTIONS_DATASOURCE_ID = process.env.NOTION_SURVEY_QUESTIONS_DATASOURCE_ID ?? '';
@@ -36,6 +38,32 @@ export class SurveysQuestionsService {
         select: (value: string) => ({select: {name: value}}),
     };
 
+    private readonly extractorUtils = {
+        richText: (property: any): string => {
+            if (!property?.rich_text || property.rich_text.length === 0) return '';
+            return property.rich_text.map((rt: any) => rt.plain_text || '').join('');
+        },
+        title: (property: any): string => {
+            if (!property?.title || property.title.length === 0) return '';
+            return property.title.map((t: any) => t.plain_text || '').join('');
+        },
+        number: (property: any): number => {
+            return property?.number ?? 0;
+        },
+        checkbox: (property: any): boolean => {
+            return property?.checkbox ?? false;
+        },
+        date: (property: any): string => {
+            return property?.date?.start ?? '';
+        },
+        url: (property: any): string => {
+            return property?.url ?? '';
+        },
+        select: (property: any): string => {
+            return property?.select?.name ?? '';
+        },
+    };
+
     private constructor() {
     }
 
@@ -49,9 +77,9 @@ export class SurveysQuestionsService {
     mapToNotionProperties(input: OdooSurveyN8NQuestion): Record<string, any> {
         return {
             id: this.mapperUtils.number(input.id),
-            title: this.mapperUtils.title(input.title),
-            description: this.mapperUtils.richText(input.description),
-            question_placeholder: this.mapperUtils.richText(input.question_placeholder),
+            title: this.mapperUtils.title(this.stripHtml(input.title)),
+            description: this.mapperUtils.richText(this.stripHtml(input.description)),
+            question_placeholder: this.mapperUtils.richText(this.stripHtml(input.question_placeholder)),
             survey_id: this.mapperUtils.richText(`${input.survey_id[0]} - ${input.survey_id[1]}`),
             session_available: this.mapperUtils.checkbox(input.session_available),
             is_page: this.mapperUtils.checkbox(input.is_page),
@@ -61,6 +89,60 @@ export class SurveysQuestionsService {
             create_uid: this.mapperUtils.richText(input.create_uid.toString()),
             create_date: this.mapperUtils.date(input.create_date),
             survey_type: this.mapperUtils.select(input.survey_type),
+        };
+    }
+
+    mapFromNotionPage(page: SurveyQuestionPage | PageObjectResponse): OdooSurveyN8NQuestion {
+        const props = (page as SurveyQuestionPage).properties;
+
+        // Parsear survey_id de string a tupla [number, string]
+        const surveyIdStr = this.extractorUtils.richText(props.survey_id);
+        let surveyId: [number, string] = [0, ''];
+        if (surveyIdStr) {
+            const match = surveyIdStr.match(/^(\d+)\s*-\s*(.+)$/);
+            if (match) {
+                surveyId = [parseInt(match[1]), match[2].trim()];
+            }
+        }
+
+        // Parsear question_ids de string a array de números
+        const questionIdsStr = this.extractorUtils.richText(props.question_ids);
+        const questionIds = questionIdsStr
+            ? questionIdsStr.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id))
+            : [];
+
+        // Parsear create_uid de string a tupla [number, string]
+        const createUidStr = this.extractorUtils.richText(props.create_uid);
+        let createUid: [number, string] = [0, ''];
+        if (createUidStr) {
+            try {
+                const parsed = JSON.parse(createUidStr);
+                if (Array.isArray(parsed) && parsed.length === 2) {
+                    createUid = [parsed[0], parsed[1]];
+                }
+            } catch {
+                // Si falla el parseo JSON, intentar extraer del formato string
+                const match = createUidStr.match(/(\d+),\s*(.+)/);
+                if (match) {
+                    createUid = [parseInt(match[1]), match[2]];
+                }
+            }
+        }
+
+        return {
+            id: this.extractorUtils.number(props.id),
+            title: this.extractorUtils.title(props.title),
+            description: this.extractorUtils.richText(props.description),
+            question_placeholder: this.extractorUtils.richText(props.question_placeholder),
+            survey_id: surveyId,
+            session_available: this.extractorUtils.checkbox(props.session_available),
+            is_page: this.extractorUtils.checkbox(props.is_page),
+            question_ids: questionIds,
+            is_time_limited: this.extractorUtils.checkbox(props.is_time_limited),
+            time_limit: this.extractorUtils.number(props.time_limit),
+            create_uid: createUid,
+            create_date: this.extractorUtils.date(props.create_date),
+            survey_type: this.extractorUtils.select(props.survey_type) as surveyType,
         };
     }
 
@@ -340,6 +422,30 @@ export class SurveysQuestionsService {
     // ========================================
     // MÉTODOS AUXILIARES
     // ========================================
+
+    // Convertir HTML a texto plano
+    stripHtml(text: string): string {
+        if (!text) return '';
+
+        // Reemplazar <br> y </div> con saltos de línea
+        let clean = text.replace(/<br\s*\/?>/gi, '\n');
+        clean = clean.replace(/<\/div>/gi, '\n');
+
+        // Eliminar todas las demás etiquetas HTML
+        clean = clean.replace(/<[^>]*>/g, '');
+
+        // Decodificar entidades HTML básicas
+        clean = clean.replace(/&nbsp;/g, ' ');
+        clean = clean.replace(/&amp;/g, '&');
+        clean = clean.replace(/&lt;/g, '<');
+        clean = clean.replace(/&gt;/g, '>');
+        clean = clean.replace(/&quot;/g, '"');
+
+        // Limpiar líneas vacías múltiples
+        clean = clean.replace(/\n\s*\n\s*\n/g, '\n\n');
+
+        return clean.trim();
+    }
 
     // Validar email
     isValidEmail(email: string): boolean {

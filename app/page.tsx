@@ -1,10 +1,7 @@
-import { PersonasListClient } from "@/app/components/Personas/PersonasListClient";
-import styles from './page.module.css';
+import SurveyList from "@/app/surveys/componets/SurveyList";
 
 export default function Home() {
-  return (
-    <main className={styles.container}>
-      <PersonasListClient />
-    </main>
-  );
+    return (
+        <h2>Home</h2>
+    );
 }

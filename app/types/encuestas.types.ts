@@ -32,7 +32,7 @@ export interface OdooSurveyN8N {
 
 export type surveyType = "survey" | "live_session" | "assessment" | "custom";
 
-export type CreateOdooSurveyN8N = Pick<OdooSurveyN8N, 'title' | 'display_name' | 'description' | 'survey_type'>
+export type CreateOdooSurveyN8N = Pick<OdooSurveyN8N, 'title' | 'display_name' | 'description' | 'survey_type'> | Partial<OdooSurveyN8N>
 
 export type UpdateOdooSurveyN8N = Partial<Omit<CreateOdooSurveyN8N, "id">>
 

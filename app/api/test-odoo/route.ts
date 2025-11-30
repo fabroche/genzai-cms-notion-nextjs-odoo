@@ -78,15 +78,17 @@ export async function GET() {
         }
 
 
+        const surveys = await encuestasService.syncNotionDatabaseWithOdoo();
+        const surveysQuestions = await encuestasQuestionsService.syncNotionDatabaseWithOdoo();
 
-        const surveysQuestionsOdoo = await encuestasQuestionsService.getOdooSurveyQuestions();
-
-        const promisesSurveysQuestions = surveysQuestionsOdoo.map(async (survey: OdooSurveyN8NQuestion) => {
-
-            return await encuestasQuestionsService.createOrUpdateNotionSurveyQuestion(survey)
-        })
-
-        const surveys = await Promise.all(promisesSurveysQuestions);
+        // const surveysQuestionsOdoo = await encuestasQuestionsService.getOdooSurveyQuestions();
+        //
+        // const promisesSurveysQuestions = surveysQuestionsOdoo.map(async (survey: OdooSurveyN8NQuestion) => {
+        //
+        //     return await encuestasQuestionsService.createOrUpdateNotionSurveyQuestion(survey)
+        // })
+        //
+        // const surveys = await Promise.all(promisesSurveysQuestions);
 
 
         // const surveysOdoo = await encuestasService.getOdooSurveys();
@@ -121,8 +123,7 @@ export async function GET() {
             success: true,
             message: 'Conexión exitosa con Odoo usando JSON-RPC + API Key',
             surveys: {
-                count: surveys.length,
-                data: surveys
+                data: {surveys, surveysQuestions}
             }
         });
 

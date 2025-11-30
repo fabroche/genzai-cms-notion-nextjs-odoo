@@ -15,7 +15,7 @@ export default async function PersonaPage({ params }: PersonaPageProps) {
     <main className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.backButtonContainer}>
-          <Link href="/" className={styles.backButton}>
+          <Link href="/public" className={styles.backButton}>
             <svg
               width="16"
               height="16"
