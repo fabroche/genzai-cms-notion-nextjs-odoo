@@ -1,0 +1,16 @@
+id,title,description,question_placeholder,survey_id,session_available,is_page,question_ids,is_time_limited,time_limit,create_uid,create_date,survey_type
+1,¿Cuál es tu nivel de satisfacción?,Evalúa tu experiencia general con nuestro servicio,Escribe tu respuesta aquí...,"[101, ""Encuesta de Satisfacción""]",true,false,"[1, 2, 3]",false,0,"[1, ""Admin User""]",2024-01-15T10:30:00Z,survey
+2,Información demográfica,Sección para recopilar datos demográficos,,"[101, ""Encuesta de Satisfacción""]",true,true,"[3, 4, 5, 6]",false,0,"[1, ""Admin User""]",2024-01-15T10:31:00Z,survey
+3,¿Con qué frecuencia usas nuestro producto?,Indica la frecuencia de uso,Selecciona una opción,"[101, ""Encuesta de Satisfacción""]",true,false,[],false,0,"[1, ""Admin User""]",2024-01-15T10:32:00Z,survey
+4,¿Qué características te gustan más?,Selecciona las características que consideres más valiosas,Escoge todas las que apliquen,"[102, ""Evaluación de Producto""]",false,false,"[7, 8]",true,300,"[2, ""Survey Manager""]",2024-01-16T14:20:00Z,assessment
+5,Comentarios adicionales,Espacio para comentarios y sugerencias,Comparte tus ideas aquí...,"[102, ""Evaluación de Producto""]",false,false,[],false,0,"[2, ""Survey Manager""]",2024-01-16T14:21:00Z,assessment
+6,¿Recomendarías este servicio?,Pregunta de Net Promoter Score,Del 0 al 10,"[103, ""NPS Survey""]",true,false,"[10]",false,0,"[1, ""Admin User""]",2024-01-17T09:00:00Z,survey
+7,Sección: Experiencia de Usuario,Página de introducción para preguntas de UX,,"[104, ""UX Research Survey""]",true,true,"[11, 12, 13, 14]",false,0,"[3, ""Research Team""]",2024-01-18T11:45:00Z,custom
+8,¿Qué tan fácil fue completar tu compra?,Evalúa la facilidad del proceso de checkout,Califica del 1 al 5,"[105, ""E-commerce Feedback""]",true,false,"[15]",true,180,"[1, ""Admin User""]",2024-01-19T08:30:00Z,survey
+9,Pregunta de trivia técnica,Evalúa conocimiento sobre el framework,Escribe tu respuesta,"[106, ""Technical Assessment""]",false,false,[],true,600,"[4, ""HR Department""]",2024-01-20T13:15:00Z,assessment
+10,¿Cuál es tu rol en la empresa?,Identifica tu posición actual,Selecciona tu rol,"[107, ""Employee Survey""]",true,false,"[16, 17]",false,0,"[5, ""HR Manager""]",2024-01-21T10:00:00Z,survey
+11,Sesión en vivo: Preguntas del público,Preguntas para la sesión interactiva,Escribe tu pregunta aquí,"[108, ""Live Q&A Session""]",true,false,"[18, 19, 20]",false,0,"[1, ""Admin User""]",2024-01-22T16:00:00Z,live_session
+12,¿Qué mejoras sugerirías?,Feedback constructivo sobre mejoras,Describe tus sugerencias,"[109, ""Product Roadmap Survey""]",false,false,[],false,0,"[2, ""Survey Manager""]",2024-01-23T12:30:00Z,custom
+13,Calificación de atención al cliente,Evalúa tu última interacción con soporte,Del 1 al 5 estrellas,"[110, ""Support Feedback""]",true,false,"[21]",false,0,"[6, ""Support Lead""]",2024-01-24T09:45:00Z,survey
+14,Evaluación final del curso,Última sección del examen,Responde todas las preguntas,"[111, ""Final Exam""]",false,true,"[22, 23, 24, 25, 26]",true,3600,"[4, ""HR Department""]",2024-01-25T14:00:00Z,assessment
+15,¿Cuál es tu presupuesto mensual?,Información para segmentación,Ingresa un monto aproximado,"[112, ""Market Research""]",false,false,[],false,0,"[7, ""Marketing Team""]",2024-01-26T11:20:00Z,custom

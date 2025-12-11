@@ -53,30 +53,30 @@ export function SurveyCard({survey, surveyPageId}: SurveyCardProps) {
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent>
-                    <div className="flex items-center justify-between text-sm text-neutral-500">
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1.5">
-                                <FileText className="h-4 w-4"/>
-                                <span>{survey.question_and_page_ids.length} preguntas</span>
-                            </div>
-                            {survey.answer_duration_avg > 0 && (
-                                <div className="flex items-center gap-1.5">
-                                    <Clock className="h-4 w-4"/>
-                                    <span>{formatDuration(survey.answer_duration_avg)}</span>
-                                </div>
-                            )}
+            </Link>
+            <CardContent>
+                <div className="flex items-center justify-between text-sm text-neutral-500">
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1.5">
+                            <FileText className="h-4 w-4"/>
+                            <span>{survey.question_and_page_ids.length} preguntas</span>
                         </div>
-                        {survey.session_link && (
-                            <Button variant="ghost" size="sm" asChild>
-                                <a href={survey.session_link} target="_blank" rel="noopener noreferrer">
-                                    <ExternalLink className="h-4 w-4"/>
-                                </a>
-                            </Button>
+                        {survey.answer_duration_avg > 0 && (
+                            <div className="flex items-center gap-1.5">
+                                <Clock className="h-4 w-4"/>
+                                <span>{formatDuration(survey.answer_duration_avg)}</span>
+                            </div>
                         )}
                     </div>
-                </CardContent>
-            </Link>
+                    {survey.session_link && (
+                        <Button variant="ghost" size="sm" asChild>
+                            <a href={survey.session_link} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="h-4 w-4"/>
+                            </a>
+                        </Button>
+                    )}
+                </div>
+            </CardContent>
         </Card>
     );
 }

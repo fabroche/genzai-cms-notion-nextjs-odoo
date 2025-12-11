@@ -3,21 +3,9 @@ import {OdooSurveyN8N, SurveyPage, SurveyProperties} from "@/app/types/encuestas
 import {SurveyCard} from "@/app/surveys/componets/SurveyCard";
 import styles from "@/app/surveys/componets/SurveyList.module.css"
 
-export default async function SurveyList() {
+export default async function SurveyList({children}: { children?: React.ReactNode }) {
 
-    const surveysService = SurveysService.getInstance();
-
-    const {results} = await surveysService.getNotionSurveysPages();
-
-    return (<div className={styles.SurveyList}>
-        {
-            results.map((survey) => {
-                const mappedSurvey = surveysService.mapFromNotionPage(survey as SurveyPage);
-
-                return (
-                    <SurveyCard key={mappedSurvey.id} survey={mappedSurvey} surveyPageId={survey.id}/>
-                )
-            })
-        }
-    </div>)
+    return <>
+        {children}
+    </>
 }
